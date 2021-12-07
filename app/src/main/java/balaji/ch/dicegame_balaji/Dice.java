@@ -6,9 +6,10 @@ public class Dice {
     private int sideUp;
     private int sides;
     private String name;
-    Dice(){
-        name = "d6";
-        sides = 6;
+
+    Dice(int sides){
+        name = "d" + sides;
+        this.sides = sides;
         roll();
     }
 
@@ -18,27 +19,29 @@ public class Dice {
         sideUp = random.nextInt(sides) + 1;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSides(int sides) {
-        this.sides = sides;
-    }
-
-    public void setSideUp(int sideUp) {
-        this.sideUp = sideUp;
-    }
-
-    public int getSides() {
-        return sides;
-    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public void setSides(int sides) {
+//        this.sides = sides;
+//    }
+//
+//    public void setSideUp(int sideUp) {
+//        this.sideUp = sideUp;
+//    }
+//
+//    public int getSides() {
+//        return sides;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
 
     public int getSideUp() {
         return sideUp;
     }
 
-    public String getName() {
-        return name;
-    }
+
 }

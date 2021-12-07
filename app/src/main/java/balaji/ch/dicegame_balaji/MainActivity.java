@@ -5,10 +5,14 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner diceSpinnerS;
     Button rollButtonB;
     SwitchCompat diceSwitchSC;
+    int diceSides;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +35,73 @@ public class MainActivity extends AppCompatActivity {
         rollButtonB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dice d6 = new Dice();
-                d6.roll();
-                diceScoreTV.setText(String.valueOf(d6.getSideUp()));
+                returnResults();
             }
         });
+
+        ArrayList<DieType> dieSides = new ArrayList<>();
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,dieSides);
+
+        dieSides.add(new DieType("Dice Size (how many sides): "));
+        dieSides.add(new DieType("4"));
+        dieSides.add(new DieType("6"));
+        dieSides.add(new DieType("8"));
+        dieSides.add(new DieType("12"));
+        dieSides.add(new DieType("20"));
+
+        diceSpinnerS.setAdapter(adapter);
+
+        diceSpinnerS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                diceSides = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+
+
+    public void returnResults(){
+
+        switch (diceSides){
+            case 1:
+                throwDice(4);
+                break;
+            case 3:
+                throwDice(8);
+                break;
+            case 4:
+                throwDice(12);
+                break;
+            case 5:
+                throwDice(20);
+                break;
+            case 2:
+            default:
+                throwDice(6);
+                break;
+        }
+
+    }
+
+
+    public void throwDice(int diceSides) {
+        if (!diceSwitchSC.isChecked()) {
+            Dice d = new Dice(diceSides);
+            d.roll();
+            diceScoreTV.setText(String.valueOf(d.getSideUp()));
+        } else {
+            Dice d1 = new Dice(diceSides);
+            d1.roll();
+
+            Dice d2 = new Dice(diceSides);
+            d2.roll();
+            diceScoreTV.setText(String.valueOf(d1.getSideUp()) + "      " + String.valueOf(d2.getSideUp()));
+        }
     }
 }
