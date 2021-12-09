@@ -7,6 +7,7 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+<!--    This is a results TextView. We'll return results of the die or two dice here.-->
     <TextView
         android:id="@+id/diceScore"
         android:layout_width="match_parent"
@@ -19,6 +20,8 @@
         android:gravity="center_horizontal"
         android:autoSizeTextType="uniform"/>
 
+<!--    This is a dropdown menu which shows number of die sides. We have a static list which will increase
+        everytime we add a new die. -->
     <Spinner
         android:id="@+id/diceSpinner"
         android:layout_marginTop="20sp"
@@ -27,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"/>
 
+<!--    The results are return on the above Textview when we click this button, ROLL-->
     <Button
         android:id="@+id/rollButton"
         android:layout_width="match_parent"
@@ -37,6 +41,7 @@
         android:text="ROLL"/>
 
 
+<!--    This layout consists of a textview and a switch which will ask the user if we have to roll two dice -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,13 +66,15 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-
+<!-- This layout consists of an EditText and a button.-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="104dp"
         android:layout_marginTop="7dp"
         android:gravity="center"
         android:orientation="horizontal">
+
+<!--        This is an EditText. We enter the number of sides we want in this box which will be added in to the spinner -->
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -88,7 +95,7 @@
                 android:textSize="25sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
+<!--This button is used to add the user defined number of sides of a die into the spinner -->
         <Button
             android:id="@+id/addButton"
             android:layout_width="wrap_content"
@@ -100,6 +107,7 @@
 
     </LinearLayout>
 
+<!--    This textview stores the history-->
     <TextView
         android:id="@+id/history"
         android:layout_marginTop="30sp"

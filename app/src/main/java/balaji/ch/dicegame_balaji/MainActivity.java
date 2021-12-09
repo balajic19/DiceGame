@@ -17,9 +17,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
+//    Declaring all the required variables our App
 
     private TextView diceScoreTV;
     private Spinner diceSpinnerS;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText dynamicDiceET;
     private String historyData;
     private TextView historyTV;
+    private String result;
     private SharedPreferences prefs;
     ArrayList<DieType> dieSides;
     ArrayAdapter adapter;
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //        Initializing Every view, button, textview, editview, spinner
         diceScoreTV = findViewById(R.id.diceScore);
         diceSpinnerS = findViewById(R.id.diceSpinner);
         diceSwitchSC = findViewById(R.id.diceSwitch);
@@ -51,14 +55,16 @@ public class MainActivity extends AppCompatActivity {
         addDiceButton = findViewById(R.id.addButton);
         dynamicDiceET = findViewById(R.id.dynamicDice);
         historyTV = findViewById(R.id.history);
-        historyData = "History: ";
+        historyData = "";
 
         diceSides = 6;
 
 
+//        This snippet runs when we click on the ROLL button in the UI and it called throwDice() method
         rollButtonB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                When the ROLL button is clicked, We are extracting the item that is selected on the Spinner and passing it to the throwDice() method as integer
                 diceSpinnerS = findViewById(R.id.diceSpinner);
                 String spinnerSelected = String.valueOf(diceSpinnerS.getSelectedItem());
                 diceSides = (int) Double.parseDouble(spinnerSelected);
@@ -68,9 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+//        I am initializing an Array list of Die Type and adapter to insert the list into the spinner
         dieSides = new ArrayList<>();
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,dieSides);
 
+//        I am adding the die sides in the list
         //dieSides.add(new DieType("Dice Size (how many sides): "));
         dieSides.add(new DieType("4"));
         dieSides.add(new DieType("6"));
@@ -78,19 +86,32 @@ public class MainActivity extends AppCompatActivity {
         dieSides.add(new DieType("12"));
         dieSides.add(new DieType("20"));
 
+
+//        The below runs when the ADD button is clicked.
         addDiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean flag = false;
+//                When the ADD button is clicked, we will extract the data from the edittext and add it to the array list which intern adds the data into the spinner
                 dynamicDiceString = dynamicDiceET.getText().toString();
+
+//                Checking if the EditText is empty or not and then adding the number which is typed in edittext will be added to the arraylist and the spinner
+//                only if that number is not present
                 if(!dynamicDiceString.isEmpty()){
-//                    if (!dieSides.contains(dynamicDiceString)){
-//                        dieSides.add(new DieType(dynamicDiceString));
-//                    }
-                    dieSides.add(new DieType(dynamicDiceString));
+                    for(DieType eachDie: dieSides){
+                        if(String.valueOf(eachDie).equals(dynamicDiceString)){
+                            flag = true;
+                            break;
+                        }
+                    }
+
+                    if (!flag){
+                        dieSides.add(new DieType(dynamicDiceString));
+                    }
                     dynamicDiceET.setText("");
-                    saveData();
-                    diceSpinnerS.setAdapter(adapter);
-                    diceSpinnerS.setSelection(1, true);
+//                    saveData();
+//                    diceSpinnerS.setAdapter(adapter);
+//                    diceSpinnerS.setSelection(1, true);
                 }
             }
         });
@@ -98,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
         diceSpinnerS.setAdapter(adapter);
         diceSpinnerS.setSelection(1, true);
+
+//        This snippet runs when we select a particular item in the spinner. When selected, we'll assign it's value to a variable roll the die when ROLL button is clicked.
         diceSpinnerS.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -114,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//    These are shared preferences.
+//    Code saved every time in it's local storage
     @Override
     protected void onResume() {
         super.onResume();
@@ -129,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
         String historyDataString = prefs.getString("history_data_prefs", historyData);
         historyTV.setText(historyDataString);
 
+        String dieResult = prefs.getString("die_result_prefs", "result");
+        diceScoreTV.setText(dieResult);
+
 //        String defaultSpinnerElements = "4, 6, 8, 12, 20";
 //        String spinnerString = prefs.getString("spinner_string_dice_prefs", defaultSpinnerElements);
 //        Log.d("spinnerString", spinnerString);
@@ -136,8 +164,8 @@ public class MainActivity extends AppCompatActivity {
 //        for (String eachStringElement: spinnerString.split(",")){
 //            dieSides.add(new DieType(eachStringElement.trim()));
 //        }
-
-//        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, dieSides);
+//
+//        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, dieSides);
 //        diceSpinnerS.setAdapter(adapter);
 //        editor.clear();
     }
@@ -160,15 +188,21 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+//    Our logic runs in this method.
+//    We get an integer which says the number of sides a die has and then we'll call the Dice class to return a random number from 1 to the number, dicesides.
     public void throwDice(int diceSides) {
+//        We are checking if one die is asked to roll or two dice.
         if (!diceSwitchSC.isChecked()) {
             Dice d = new Dice(diceSides);
             d.roll();
-            String dieScore = String.valueOf(d.getSideUp());
-            diceScoreTV.setText(dieScore);
-            historyData = historyData + dieScore + ", ";
-            if (historyData.length() > 50){
-                historyData = "History: ";
+            result = String.valueOf(d.getSideUp());
+            diceScoreTV.setText(result);
+            if (historyData.isEmpty()){
+                historyData = "History: " + result;
+            } else if (historyData.length() > 50){
+                historyData = "History: " + result;
+            }else{
+                historyData = historyData + "," + result;
             }
             historyTV.setText(historyData);
 
@@ -181,30 +215,36 @@ public class MainActivity extends AppCompatActivity {
             d2.roll();
             String die1Score = d1.getSideUp() + "";
             String die2Score = d2.getSideUp() + "";
-            String tempResult =  die1Score + "      " + die2Score;
-            diceScoreTV.setText(tempResult);
-            historyData = historyData + die1Score + ", " + die2Score + ", ";
-            if (historyData.length() > 10){
-                historyData = "History: ";
+            result =  die1Score + "      " + die2Score;
+            diceScoreTV.setText(result);
+            if (historyData.isEmpty()){
+                historyData = "History: " + die1Score + "," + die2Score;
+            } else if (historyData.length() > 50){
+                historyData = "History: " + die1Score + "," + die2Score;;
+            }else{
+                historyData = historyData + "," + die1Score + "," + die2Score;
             }
             historyTV.setText(historyData);
         }
     }
 
+//    This method is called in pause, stop and destroy methods which refer to the sharedPreferences.
+
+//    We'll save the data of each view in the form of key:value pairs and return them whenever we resume or pass or stop or reopen the application.
     public void saveData(){
         editor = prefs.edit();
         editor.putBoolean("roll_two_dices_prefs", diceSwitchSC.isChecked());
         dynamicDiceET = findViewById(R.id.dynamicDice);
         editor.putString("dynamic_dice_prefs", String.valueOf(dynamicDiceET.getText()));
-
-
-
+        editor.putString("die_result_prefs", String.valueOf(diceScoreTV.getText()));
 //        String tempSpinnerString = dieSides.get(0) + "";
+//
 //        Adapter adapter = diceSpinnerS.getAdapter();
-//        for(int i=0;i<adapter.getCount();i++){
+//        for(int i=1;i<adapter.getCount();i++){
 //            tempSpinnerString = tempSpinnerString + adapter.getItem(i) + ",";
 //            Log.d("SPINNER DICE", tempSpinnerString);
 //        }
+
 
 //        String tempSpinnerString = dieSides.get(0) + "";
 //        for(int i=1;i<dieSides.size();i++){
