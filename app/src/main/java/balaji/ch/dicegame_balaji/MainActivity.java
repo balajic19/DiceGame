@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         dieSides.add(new DieType("4"));
         dieSides.add(new DieType("6"));
         dieSides.add(new DieType("8"));
+        dieSides.add(new DieType("10"));
         dieSides.add(new DieType("12"));
         dieSides.add(new DieType("20"));
 
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         String dieResult = prefs.getString("die_result_prefs", "result");
         diceScoreTV.setText(dieResult);
 
-//        String defaultSpinnerElements = "4, 6, 8, 12, 20";
+//        String defaultSpinnerElements = "4, 6, 8, 10, 12, 20";
 //        String spinnerString = prefs.getString("spinner_string_dice_prefs", defaultSpinnerElements);
 //        Log.d("spinnerString", spinnerString);
 //        ArrayList<DieType> dieSides = new ArrayList<>();
